@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: valpod
+  name: valpod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: valpod
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: valpod
+    spec:
+      containers:
+      - image: tanishabanik/mutatedeployment:0.0.1
+        name: valpod
+        ports:
+        - containerPort: 8443
+        args:
+        - --tls-cert-file=/var/run/webhook/serving-cert/tls.crt
+        - --tls-private-key-file=/var/run/webhook/serving-cert/tls.key
+        - --v=4
+        resources: {}
+        volumeMounts:
+        - name: serving-cert
+          mountPath: /var/run/webhook/serving-cert
+          readOnly: true
+      volumes:
+      - name: serving-cert
+        secret:
+          secretName: certs
+status: {}
